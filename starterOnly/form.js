@@ -30,6 +30,13 @@ const conditionsTextError =
 
 const confirmationModalS = document.querySelector(".confirmation");
 
+//refexp for email
+const refexpEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//text refexp for email
+const validateEmail = (emailValue) => {
+  return refexpEmail.test(emailValue);
+};
+
 // close modal form on form valid
 function closeModal() {
   modalbg2.style.display = "none";
@@ -45,12 +52,16 @@ function showOptionError(elem, errorContainer, textError) {
   }
 }
 function generateMessage(elem) {
-  return `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`
+  return `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
 }
 function showEmailError(elem, errorContainer) {
+  console.log("elem.value", elem.value);
+  console.log("validateEmail(elem.value)", validateEmail(elem.value));
   if (elem.value == "") {
     // If  empty,
     errorContainer.textContent = generateMessage(elem);
+  } else if (!validateEmail(elem.value)) {
+    errorContainer.textContent = "Veuillez entrer une adresse email correcte.";
   } else if (elem.validity.valueMissing) {
     // If  value missing,
     errorContainer.textContent = generateMessage(elem);
@@ -124,12 +135,12 @@ inputElements.forEach((elem) => {
 //setting error message for set of options
 for (const option of options) {
   option.onclick = (e) => {
-    showOptionError(option, optionError, optionTextError);//set option error
+    showOptionError(option, optionError, optionTextError); //set option error
   };
 }
 //setting error message for otion conditions of use
 conditions.addEventListener("click", (event) => {
-  showOptionError(conditions, conditionsError, conditionsTextError);//set option conditions of use  error
+  showOptionError(conditions, conditionsError, conditionsTextError); //set option conditions of use  error
 });
 
 //validate form conditions

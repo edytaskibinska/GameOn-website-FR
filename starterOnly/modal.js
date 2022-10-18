@@ -11,11 +11,14 @@ function editNav() {
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
-const closeModalX = document.querySelectorAll(".close");
+const closeModalX = document.querySelectorAll(".closeModal");
+const confirmationModal = document.querySelector(".confirmation");
+const closeConfirmation = document.querySelectorAll(".closeConfirmation");
 
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 closeModalX.forEach((btn) => btn.addEventListener("click", closeModal));
+closeConfirmation.forEach((btn) => btn.addEventListener("click", closeConfirmModal));
 
 // launch modal form
 function launchModal() {
@@ -27,4 +30,8 @@ function closeModal() {
   modalbg.style.display = "none";
 }
 
+// close conform modal form
+function closeConfirmModal() {
+  confirmationModal.style.display = "none";
+}
 

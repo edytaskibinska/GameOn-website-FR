@@ -1,3 +1,5 @@
+const modalbg2 = document.querySelector(".bground");
+
 const form = document.querySelector("form");
 const btnSubmit = document.querySelector(".btn-submit");
 const email = document.getElementById("email");
@@ -10,130 +12,156 @@ const nomError = document.querySelector("#last + span.error");
 
 const quantity = document.getElementById("quantity");
 const quantityError = document.querySelector("#quantity + span.error");
-let formValid = false;
 
-function showEmailError(elem) {
-  console.log(elem.validity, "in showEmailError");
+const options = document.querySelectorAll(".location-radio");
+const optionError = document.querySelector("#options + span.error");
+const optionTextError = "Choisissez au moins une option";
+
+const conditions = document.querySelector(".conditions");
+const conditionsError = document.querySelector("#conditions + span.error");
+const conditionsTextError = "Acceptez les conditions";
+
+const confirmationModalS = document.querySelector(".confirmation");
+
+// close modal form on form valid
+function closeModal() {
+  modalbg2.style.display = "none";
+}
+
+//error messages functions :
+function showOptionError(elem, errorContainer, textError) {
+  if (!elem.checked) {
+    errorContainer.textContent = textError;
+    return false;
+  } else {
+    errorContainer.textContent = "";
+  }
+}
+
+function showEmailError(elem, errorContainer, textError) {
   if (elem.value == "") {
-    emailError.textContent = "doit etre rempli.";
-  } else if (elem.validity.valueMissing) {
     // If  empty,
-    emailError.textContent = "You need to enter an e-mail address.";
+    errorContainer.textContent = textError;
+  } else if (elem.validity.valueMissing) {
+    // If  value missing,
+    errorContainer.textContent = "You need to enter an e-mail address.";
   } else if (elem.validity.typeMismatch) {
     // If the field doesn't contain an email address,
-    emailError.textContent = "Entered value needs to be an e-mail address.";
+    errorContainer.textContent = "Entered value needs to be an e-mail address.";
   } else if (elem.validity.tooShort) {
     // If data is too short,
-    emailError.textContent = `Email should be at least ${elem.minLength} characters; you entered ${email.value.length}.`;
+    errorContainer.textContent = `Email should be at least ${elem.minLength} characters; you entered ${email.value.length}.`;
   }
-  emailError.className = "error active";
+  errorContainer.className = "error active";
 }
 
-function showInputTextError(elem) {
-  console.log("elem.value.trim()", elem.value.trim())
-  if (elem.value.trim() === "") {
-    if (elem.id == "first") {
-      prenomError.textContent = `Entrez un Prénom`;
-    } else if (elem.id == "last") {
-      nomError.textContent = `Entrez un Nom`;
-    } else if (elem.id == "quantity") {
-      quantityError.textContent = `Entrez une quantité`;
-    }
+function showInputTextError(elem, errorContainer, textError) {
+  //console.log("elem.value.trim()", elem.value.trim());
+  if (elem.value === "") {
+    errorContainer.textContent = textError;
   } else if (elem.validity.tooShort) {
-    if (elem.id == "first") {
-      prenomError.textContent = `Le champs doit contenir minimum ${elem.minLength} caractères.`;
-    } else if (elem.id == "last") {
-      nomError.textContent = `Le champs doit contenir minimum ${elem.minLength} caractères.`;
-    }
-    else if (elem.id == "quantity") {
-      nomError.textContent = `Le champs doit contenir minimum ${elem.minLength} caractères.`;
-    }
+    errorContainer.textContent = `Le champs doit contenir minimum ${elem.minLength} caractères.`;
   }
   // Set the styling appropriately
-  prenomError.className = "error active";
-  nomError.className = "error active";
+  errorContainer.className = "error active";
 }
 
+// input elements
 const inputElements = [
   {
     element: prenom,
     errorElement: prenomError,
+    textError: "entrez un prenom",
     errorMessage: showInputTextError,
   },
   {
     element: nom,
     errorElement: nomError,
+    textError: "entrez un nom",
     errorMessage: showInputTextError,
   },
   {
     element: email,
     errorElement: emailError,
+    textError: "entrez un email",
     errorMessage: showEmailError,
   },
   {
     element: quantity,
     errorElement: quantityError,
+    textError: "Entrez une quantité",
     errorMessage: showInputTextError,
   },
 ];
 
+//setting error message for inputs individually
 inputElements.forEach((elem) => {
   elem.element.addEventListener("input", (event) => {
-    console.log("elem", elem, "elem.element", elem.errorElement);
     if (elem.element.value.length && elem.element.validity.valid) {
       elem.errorElement.textContent = ""; // Reset the content of the message
       elem.errorElement.className = "error"; // Reset the visual state of the message
     } else {
-      elem.errorMessage(elem.element);
+      elem.errorMessage(elem.element, elem.errorElement, elem.textError);
     }
   });
 });
 
+//setting error message for set of options
+for (const option of options) {
+  option.onclick = (e) => {
+    console.log(e.target.value);
+    console.log("option", option.checked);
+    showOptionError(option, optionError, optionTextError);
+  };
+}
+//setting error message for ption conditions of use
+conditions.addEventListener("click", (event) => {
+  showOptionError(conditions, conditionsError, conditionsTextError);
+});
+
+//validate form conditions
 function validate(event) {
-  console.log("event", event);
-  console.log("email.validity.valid", !email.validity.valid);
-  console.log("email.value", email.value);
-  console.log("prenom.value", prenom.value);
-  console.log("nom.value", nom.value);
-  // if the email field is valid, we let the form submit
+  let condition1 = false
+  let condition2 = false
+  
+  inputElements.forEach((elem) => {
+    if (elem.element.value === "" || !elem.element.validity.valid) {
+      
+      event.preventDefault();
+      elem.errorMessage(elem.element, elem.errorElement, elem.textError);
+      condition1 = false;
+    } else {
+      condition1 = true;
+    }
+  });
   if (
-    email.value == "" ||
-    prenom.value == "" ||
-    nom.value == "" ||
-    quantity.value == ""
+    !(
+      options[0].checked ||
+      options[1].checked ||
+      options[2].checked ||
+      options[3].checked ||
+      options[4].checked ||
+      options[5].checked
+    )
   ) {
-    console.log("values empty");
+    showOptionError(options, optionError, optionTextError);
     event.preventDefault();
-  } else if (!email.validity.valid) {
-    console.log("!email.validity.valid");
-
-    // If it isn't, we display an appropriate error message
-    showEmailError();
-    // Then we prevent the form from being sent by canceling the event
-    formValid = false;
-    event.preventDefault();
-  } else if (!prenom.validity.valid) {
-    console.log("!prenom.validity.valid");
-
-    // If it isn't, we display an appropriate error message
-    showInputTextError(prenom);
-    // Then we prevent the form from being sent by canceling the event
-    formValid = false;
-    event.preventDefault();
-  } else if (!nom.validity.valid) {
-    console.log("!nom.validity.valid");
-
-    // If it isn't, we display an appropriate error message
-    showInputTextError(nom);
-    // Then we prevent the form from being sent by canceling the event
-    formValid = false;
-    event.preventDefault();
+    condition2 = false
+  } else {
+    condition2 = true
   }
-  formValid = true;
+
+  return condition1 && condition2;
+}
+function validConfirmation(event) {
+  event.preventDefault()
+  closeModal()
+  confirmationModalS.style.display = "block"
 }
 
 function checkValidity(event) {
-  validate(event);
-  formValid ? console.log("valid") : event.preventDefault();
+ const formValid =  validate(event);
+  console.log("formValid", formValid)
+  formValid ? validConfirmation(event) : event.preventDefault();
 }
 btnSubmit.addEventListener("click", checkValidity);

@@ -7,19 +7,24 @@ const emailError = document.querySelector("#email + span.error");
 
 const prenom = document.getElementById("first");
 const prenomError = document.querySelector("#first + span.error");
+
 const nom = document.getElementById("last");
 const nomError = document.querySelector("#last + span.error");
+
+const date = document.getElementById("birthdate");
+const dateError = document.querySelector("#birthdate + span.error");
 
 const quantity = document.getElementById("quantity");
 const quantityError = document.querySelector("#quantity + span.error");
 
 const options = document.querySelectorAll(".location-radio");
 const optionError = document.querySelector("#options + span.error");
-const optionTextError = "Choisissez au moins une option";
+const optionTextError = "Vous devez choisir une option.";
 
 const conditions = document.querySelector(".conditions");
 const conditionsError = document.querySelector("#conditions + span.error");
-const conditionsTextError = "Acceptez les conditions";
+const conditionsTextError =
+  "Vous devez vérifier que vous acceptez les termes et conditions.";
 
 const confirmationModalS = document.querySelector(".confirmation");
 
@@ -38,29 +43,34 @@ function showOptionError(elem, errorContainer, textError) {
   }
 }
 
-function showEmailError(elem, errorContainer, textError) {
+function showEmailError(elem, errorContainer) {
   if (elem.value == "") {
     // If  empty,
-    errorContainer.textContent = textError;
+    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
   } else if (elem.validity.valueMissing) {
     // If  value missing,
-    errorContainer.textContent = "You need to enter an e-mail address.";
+    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
   } else if (elem.validity.typeMismatch) {
     // If the field doesn't contain an email address,
-    errorContainer.textContent = "Entered value needs to be an e-mail address.";
+    errorContainer.textContent = "Veuillez entrer une adresse email correcte.";
   } else if (elem.validity.tooShort) {
     // If data is too short,
-    errorContainer.textContent = `Email should be at least ${elem.minLength} characters; you entered ${email.value.length}.`;
+    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
   }
   errorContainer.className = "error active";
 }
 
-function showInputTextError(elem, errorContainer, textError) {
+function showInputTextError(elem, errorContainer) {
   //console.log("elem.value.trim()", elem.value.trim());
+  if (elem.value === "" || elem.validity.tooShort) {
+    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
+  }
+  // Set the styling appropriately
+  errorContainer.className = "error active";
+}
+function showInputDateError(elem, errorContainer) {
   if (elem.value === "") {
-    errorContainer.textContent = textError;
-  } else if (elem.validity.tooShort) {
-    errorContainer.textContent = `Le champs doit contenir minimum ${elem.minLength} caractères.`;
+    errorContainer.textContent = `Vous devez entrer votre date de naissance.`;
   }
   // Set the styling appropriately
   errorContainer.className = "error active";
@@ -85,6 +95,12 @@ const inputElements = [
     errorElement: emailError,
     textError: "entrez un email",
     errorMessage: showEmailError,
+  },
+  {
+    element: date,
+    errorElement: dateError,
+    textError: "Vous devez entrer votre date de naissance.",
+    errorMessage: showInputDateError,
   },
   {
     element: quantity,
@@ -121,17 +137,16 @@ conditions.addEventListener("click", (event) => {
 
 //validate form conditions
 function validate(event) {
-  let condition1 = false
-  let condition2 = false
-  
+  let fieldsValid = false;
+  let optionsValid = false;
+
   inputElements.forEach((elem) => {
     if (elem.element.value === "" || !elem.element.validity.valid) {
-      
       event.preventDefault();
-      elem.errorMessage(elem.element, elem.errorElement, elem.textError);
-      condition1 = false;
+      elem.errorMessage(elem.element, elem.errorElement);
+      fieldsValid = false;
     } else {
-      condition1 = true;
+      fieldsValid = true;
     }
   });
   if (
@@ -146,22 +161,22 @@ function validate(event) {
   ) {
     showOptionError(options, optionError, optionTextError);
     event.preventDefault();
-    condition2 = false
+    optionsValid = false;
   } else {
-    condition2 = true
+    optionsValid = true;
   }
 
-  return condition1 && condition2;
+  return fieldsValid && optionsValid;
 }
 function validConfirmation(event) {
-  event.preventDefault()
-  closeModal()
-  confirmationModalS.style.display = "block"
+  event.preventDefault();
+  closeModal();
+  confirmationModalS.style.display = "block";
 }
 
 function checkValidity(event) {
- const formValid =  validate(event);
-  console.log("formValid", formValid)
+  const formValid = validate(event);
+  console.log("formValid", formValid);
   formValid ? validConfirmation(event) : event.preventDefault();
 }
 btnSubmit.addEventListener("click", checkValidity);

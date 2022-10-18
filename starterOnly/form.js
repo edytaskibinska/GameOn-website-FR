@@ -154,10 +154,11 @@ function validate(event) {
   //fields validity check
   inputElements.forEach((elem) => {
     //add for mail
-    if (elem.element.name === "email") {
+    if (elem.element.id === "email") {
       emailField = validateEmail(elem.element.value);
     }
-    if (elem.element.name === "Date de naissance") {
+    //add for date
+    if (elem.element.id === "birthdate") {
       dateField = elem.element.value === "" ? false : true;
     }
     if (elem.element.value === "" || !elem.element.validity.valid) {
@@ -190,7 +191,7 @@ function validate(event) {
 }
 //block the page refresh to keep a valid conformation modal on
 function validConfirmation(event) {
-  event.preventDefault();
+  event.preventDefault();//revoir si possible d'afficher sans prevent default
   closeModal();
   window.scrollTo({
     top: 0,

@@ -540,20 +540,34 @@ input:focus:invalid {
 
 /* This is the style of our error messages */
 .error {
+  position: relative;
   width: 100%;
-  padding: 0;
-
-  font-size: 80%;
+  padding: 5px;
+  font-size: 0.9rem;
   color: white;
   background-color: #900;
-  border-radius: 0 0 5px 5px;
-
+  border-radius: 5px 5px;
   box-sizing: border-box;
+  margin-top: 8px;
+  display: block;
+}
+.error:before {
+  content: "";
+  background-color: #900;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  position: absolute;
+  top: -5px;
+  left: 10px;
+}
+.error:empty,
+.error:empty:before {
+  display: none;
 }
 .error:empty,
 .error.active:empty {
   padding: 0;
-
 }
 .error.active {
   padding: 0.3em;
@@ -569,4 +583,9 @@ input:focus:invalid {
   top: 48%;
   left:calc(50% - 250px);
   z-index: 999;
+}
+fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0px solid transparent;
 }

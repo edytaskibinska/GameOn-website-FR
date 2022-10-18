@@ -1,3 +1,5 @@
+//defining elements
+
 const modalbg2 = document.querySelector(".bground");
 
 const form = document.querySelector("form");
@@ -76,7 +78,7 @@ function showInputDateError(elem, errorContainer) {
   errorContainer.className = "error active";
 }
 
-// input elements
+// input elements list
 const inputElements = [
   {
     element: prenom,
@@ -117,7 +119,7 @@ inputElements.forEach((elem) => {
       elem.errorElement.textContent = ""; // Reset the content of the message
       elem.errorElement.className = "error"; // Reset the visual state of the message
     } else {
-      elem.errorMessage(elem.element, elem.errorElement, elem.textError);
+      elem.errorMessage(elem.element, elem.errorElement, elem.textError); //set error message
     }
   });
 });
@@ -125,9 +127,7 @@ inputElements.forEach((elem) => {
 //setting error message for set of options
 for (const option of options) {
   option.onclick = (e) => {
-    console.log(e.target.value);
-    console.log("option", option.checked);
-    showOptionError(option, optionError, optionTextError);
+    showOptionError(option, optionError, optionTextError);//set option error
   };
 }
 //setting error message for ption conditions of use
@@ -137,9 +137,11 @@ conditions.addEventListener("click", (event) => {
 
 //validate form conditions
 function validate(event) {
+  //check for fields
   let fieldsValid = false;
+  //check for options
   let optionsValid = false;
-
+  //fields validity check
   inputElements.forEach((elem) => {
     if (elem.element.value === "" || !elem.element.validity.valid) {
       event.preventDefault();
@@ -149,6 +151,7 @@ function validate(event) {
       fieldsValid = true;
     }
   });
+  //options validity check
   if (
     !(
       options[0].checked ||
@@ -165,18 +168,21 @@ function validate(event) {
   } else {
     optionsValid = true;
   }
-
+  //check result for both condition - form valid if both true
   return fieldsValid && optionsValid;
 }
+//block the page refresh to keep a valid conformation modal on
 function validConfirmation(event) {
   event.preventDefault();
   closeModal();
   confirmationModalS.style.display = "block";
 }
-
+//check validity for button submit
 function checkValidity(event) {
+  //store the result of form validation
   const formValid = validate(event);
-  console.log("formValid", formValid);
+  //if form valid so show confirmation modal else prevent refresh
   formValid ? validConfirmation(event) : event.preventDefault();
 }
+// adding event listener for submit button of form
 btnSubmit.addEventListener("click", checkValidity);

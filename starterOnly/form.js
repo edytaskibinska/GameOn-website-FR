@@ -56,7 +56,7 @@ function generateMessage(elem) {
 }
 function showEmailError(elem, errorContainer) {
   console.log("elem.value", elem.value);
-  console.log("validateEmail(elem.value)", validateEmail(elem.value));
+
   if (elem.value == "") {
     // If  empty,
     errorContainer.textContent = generateMessage(elem);
@@ -77,7 +77,7 @@ function showEmailError(elem, errorContainer) {
 
 function showInputTextError(elem, errorContainer) {
   //console.log("elem.value.trim()", elem.value.trim());
-  if (elem.value === "" || elem.validity.tooShort) {
+  if (elem.value === "" || elem.value === null || elem.validity.tooShort) {
     errorContainer.textContent = generateMessage(elem);
   }
   // Set the styling appropriately
@@ -147,11 +147,19 @@ conditions.addEventListener("click", (event) => {
 function validate(event) {
   //check for fields
   let fieldsValid = false;
+  let emailField = false;
+  let dateField = false;
   //check for options
   let optionsValid = false;
   //fields validity check
   inputElements.forEach((elem) => {
     //add for mail
+    if (elem.element.name === "email") {
+      emailField = validateEmail(elem.element.value);
+    }
+    if (elem.element.name === "Date de naissance") {
+      dateField = elem.element.value === "" ? false : true;
+    }
     if (elem.element.value === "" || !elem.element.validity.valid) {
       event.preventDefault();
       elem.errorMessage(elem.element, elem.errorElement);
@@ -178,12 +186,17 @@ function validate(event) {
     optionsValid = true;
   }
   //check result for both condition - form valid if both true
-  return fieldsValid && optionsValid;
+  return fieldsValid && optionsValid && emailField && dateField;
 }
 //block the page refresh to keep a valid conformation modal on
 function validConfirmation(event) {
   event.preventDefault();
   closeModal();
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
   confirmationModalS.style.display = "block";
 }
 //check validity for button submit

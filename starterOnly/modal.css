@@ -567,7 +567,6 @@ input:focus:invalid {
   border-radius: 3px;
   position: absolute;
   top: 48%;
-  left:calc(50% - 100px);
+  left:calc(50% - 250px);
   z-index: 999;
-  width: 210px;
 }

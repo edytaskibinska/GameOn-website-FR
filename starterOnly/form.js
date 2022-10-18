@@ -44,20 +44,22 @@ function showOptionError(elem, errorContainer, textError) {
     errorContainer.textContent = "";
   }
 }
-
+function generateMessage(elem) {
+  return `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`
+}
 function showEmailError(elem, errorContainer) {
   if (elem.value == "") {
     // If  empty,
-    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
+    errorContainer.textContent = generateMessage(elem);
   } else if (elem.validity.valueMissing) {
     // If  value missing,
-    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
+    errorContainer.textContent = generateMessage(elem);
   } else if (elem.validity.typeMismatch) {
     // If the field doesn't contain an email address,
     errorContainer.textContent = "Veuillez entrer une adresse email correcte.";
   } else if (elem.validity.tooShort) {
     // If data is too short,
-    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
+    errorContainer.textContent = generateMessage(elem);
   }
   errorContainer.className = "error active";
 }
@@ -65,7 +67,7 @@ function showEmailError(elem, errorContainer) {
 function showInputTextError(elem, errorContainer) {
   //console.log("elem.value.trim()", elem.value.trim());
   if (elem.value === "" || elem.validity.tooShort) {
-    errorContainer.textContent = `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
+    errorContainer.textContent = generateMessage(elem);
   }
   // Set the styling appropriately
   errorContainer.className = "error active";
@@ -83,31 +85,26 @@ const inputElements = [
   {
     element: prenom,
     errorElement: prenomError,
-    textError: "entrez un prenom",
     errorMessage: showInputTextError,
   },
   {
     element: nom,
     errorElement: nomError,
-    textError: "entrez un nom",
     errorMessage: showInputTextError,
   },
   {
     element: email,
     errorElement: emailError,
-    textError: "entrez un email",
     errorMessage: showEmailError,
   },
   {
     element: date,
     errorElement: dateError,
-    textError: "Vous devez entrer votre date de naissance.",
     errorMessage: showInputDateError,
   },
   {
     element: quantity,
     errorElement: quantityError,
-    textError: "Entrez une quantité",
     errorMessage: showInputTextError,
   },
 ];
@@ -119,7 +116,7 @@ inputElements.forEach((elem) => {
       elem.errorElement.textContent = ""; // Reset the content of the message
       elem.errorElement.className = "error"; // Reset the visual state of the message
     } else {
-      elem.errorMessage(elem.element, elem.errorElement, elem.textError); //set error message
+      elem.errorMessage(elem.element, elem.errorElement); //set error message
     }
   });
 });
@@ -130,9 +127,9 @@ for (const option of options) {
     showOptionError(option, optionError, optionTextError);//set option error
   };
 }
-//setting error message for ption conditions of use
+//setting error message for otion conditions of use
 conditions.addEventListener("click", (event) => {
-  showOptionError(conditions, conditionsError, conditionsTextError);
+  showOptionError(conditions, conditionsError, conditionsTextError);//set option conditions of use  error
 });
 
 //validate form conditions
@@ -143,6 +140,7 @@ function validate(event) {
   let optionsValid = false;
   //fields validity check
   inputElements.forEach((elem) => {
+    //add for mail
     if (elem.element.value === "" || !elem.element.validity.valid) {
       event.preventDefault();
       elem.errorMessage(elem.element, elem.errorElement);

@@ -91,41 +91,41 @@ function showInputDateError(elem, errorContainer) {
   errorContainer.className = "error active";
 }
 
-  //check for fields
-  let prenomField = false;
-  let nomField = false;
-  let quantityField = false;
-  let emailField = false;
-  let dateField = false;
-  //check for options
-  let optionsValid = false;
-
-
 // input elements list
 const inputElements = [
   {
     element: prenom,
     errorElement: prenomError,
+    isValidField: false,
+    elementId: "first",
     errorMessage: showInputTextError,
   },
   {
     element: nom,
     errorElement: nomError,
+    isValidField: false,
+    elementId: "last",
     errorMessage: showInputTextError,
   },
   {
     element: email,
     errorElement: emailError,
+    isValidField: false,
+    elementId: "email",
     errorMessage: showEmailError,
   },
   {
     element: date,
     errorElement: dateError,
+    isValidField: false,
+    elementId: "birthdate",
     errorMessage: showInputDateError,
   },
   {
     element: quantity,
     errorElement: quantityError,
+    isValidField: false,
+    elementId: "quantity",
     errorMessage: showInputTextError,
   },
 ];
@@ -148,72 +148,49 @@ for (const option of options) {
     showOptionError(option, optionError, optionTextError); //set option error
   };
 }
-//setting error message for otion conditions of use
+//setting error message for option conditions of use
 conditions.addEventListener("click", (event) => {
   showOptionError(conditions, conditionsError, conditionsTextError); //set option conditions of use  error
 });
 
-//validate form conditions
-function validate(event) {
+function validateField(elementBase, elemId) {
+  if (elementBase.element.id === elemId) {
+    elementBase.isValidField =
+      elementBase.element.value === "" || !elementBase.element.validity.valid
+        ? false
+        : true;
+    if (!elementBase.isValidField) {
+      elementBase.errorMessage(elementBase.element, elementBase.errorElement); //set error message
+    }
+    return elementBase.isValidField;
+  }
+}
+//defining variables for filsd validation initialized to false
+let emailRegexValid = false;
+let optionsValid = false;
+let termOfUseValid = false;
 
-  //fields validity check
+//validate form conditions - return true or false
+function validate(event) {
+  //for all fields in inputElements - validity check
   inputElements.forEach((elem) => {
-    //add for prenom
-    if (elem.element.id === "first") {
-      prenomField =
-        elem.element.value === "" || !elem.element.validity.valid
-          ? false
-          : true;
-      if (!prenomField) {
-        elem.errorMessage(elem.element, elem.errorElement); //set error message
-      }
-      console.log("prenomField", prenomField);
-      return prenomField;
-    }
-    //add for nom
-    if (elem.element.id === "last") {
-      nomField =
-        elem.element.value === "" || !elem.element.validity.valid
-          ? false
-          : true;
-      if (!nomField) {
-        elem.errorMessage(elem.element, elem.errorElement); //set error message
-      }
-      console.log("nomField", nomField);
-      return nomField;
-    }
-    //add for date
-    if (elem.element.id === "birthdate") {
-      dateField =
-        elem.element.value === "" || !elem.element.validity.valid
-          ? false
-          : true;
-      if (!dateField) {
-        elem.errorMessage(elem.element, elem.errorElement); //set error message
-      }
-      console.log("dateField", dateField);
-      return dateField;
-    }
-    //add for quantity
-    if (elem.element.id === "quantity") {
-      quantityField =
-        elem.element.value === "" || !elem.element.validity.valid
-          ? false
-          : true;
-      if (!quantityField) {
-        elem.errorMessage(elem.element, elem.errorElement); //set error message
-      }
-      console.log("quantityField", quantityField);
-      return quantityField;
-    }
+    validateField(elem, elem.elementId);
     //add for mail
     if (elem.element.id === "email") {
-      emailField = validateEmail(elem.element.value);
-      if (!emailField) {
+      emailRegexValid = validateEmail(elem.element.value);
+      if (!emailRegexValid) {
         elem.errorMessage(elem.element, elem.errorElement); //set error message
       }
     }
   });
+  //for all fields in inputElements - validity result
+  const inputsAreValid =
+    inputElements[0].isValidField &&
+    inputElements[1].isValidField &&
+    inputElements[2].isValidField &&
+    inputElements[3].isValidField &&
+    inputElements[4].isValidField;
+
   //options validity check
   if (
     !(
@@ -231,16 +208,18 @@ function validate(event) {
   } else {
     optionsValid = true;
   }
-  //check result for both condition - form valid if both true
-  return (
-    prenomField &&
-    nomField &&
-    optionsValid &&
-    emailField &&
-    dateField &&
-    quantityField
-  );
+
+  if (!conditions.checked) {
+    showOptionError(conditions, conditionsError, conditionsTextError); //set option conditions of use  error
+    event.preventDefault();
+    termOfUseValid = false;
+  } else {
+    termOfUseValid = true;
+  }
+
+  return inputsAreValid && optionsValid && emailRegexValid && termOfUseValid;
 }
+
 //block the page refresh to keep a valid conformation modal on
 function validConfirmation(event) {
   event.preventDefault(); //revoir si possible d'afficher sans prevent default
@@ -255,9 +234,9 @@ function validConfirmation(event) {
 //check validity for button submit
 function checkValidity(event) {
   //store the result of form validation
-  const formValid = validate(event);
+  const formIsValid = validate(event);
   //if form valid so show confirmation modal else prevent refresh
-  formValid ? validConfirmation(event) : event.preventDefault();
+  formIsValid ? validConfirmation(event) : event.preventDefault();
 }
 // adding event listener for submit button of form
 btnSubmit.addEventListener("click", checkValidity);

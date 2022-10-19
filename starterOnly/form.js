@@ -91,6 +91,16 @@ function showInputDateError(elem, errorContainer) {
   errorContainer.className = "error active";
 }
 
+  //check for fields
+  let prenomField = false;
+  let nomField = false;
+  let quantityField = false;
+  let emailField = false;
+  let dateField = false;
+  //check for options
+  let optionsValid = false;
+
+
 // input elements list
 const inputElements = [
   {
@@ -145,28 +155,63 @@ conditions.addEventListener("click", (event) => {
 
 //validate form conditions
 function validate(event) {
-  //check for fields
-  let fieldsValid = false;
-  let emailField = false;
-  let dateField = false;
-  //check for options
-  let optionsValid = false;
+
   //fields validity check
   inputElements.forEach((elem) => {
-    //add for mail
-    if (elem.element.id === "email") {
-      emailField = validateEmail(elem.element.value);
+    //add for prenom
+    if (elem.element.id === "first") {
+      prenomField =
+        elem.element.value === "" || !elem.element.validity.valid
+          ? false
+          : true;
+      if (!prenomField) {
+        elem.errorMessage(elem.element, elem.errorElement); //set error message
+      }
+      console.log("prenomField", prenomField);
+      return prenomField;
+    }
+    //add for nom
+    if (elem.element.id === "last") {
+      nomField =
+        elem.element.value === "" || !elem.element.validity.valid
+          ? false
+          : true;
+      if (!nomField) {
+        elem.errorMessage(elem.element, elem.errorElement); //set error message
+      }
+      console.log("nomField", nomField);
+      return nomField;
     }
     //add for date
     if (elem.element.id === "birthdate") {
-      dateField = elem.element.value === "" ? false : true;
+      dateField =
+        elem.element.value === "" || !elem.element.validity.valid
+          ? false
+          : true;
+      if (!dateField) {
+        elem.errorMessage(elem.element, elem.errorElement); //set error message
+      }
+      console.log("dateField", dateField);
+      return dateField;
     }
-    if (elem.element.value === "" || !elem.element.validity.valid) {
-      event.preventDefault();
-      elem.errorMessage(elem.element, elem.errorElement);
-      fieldsValid = false;
-    } else {
-      fieldsValid = true;
+    //add for quantity
+    if (elem.element.id === "quantity") {
+      quantityField =
+        elem.element.value === "" || !elem.element.validity.valid
+          ? false
+          : true;
+      if (!quantityField) {
+        elem.errorMessage(elem.element, elem.errorElement); //set error message
+      }
+      console.log("quantityField", quantityField);
+      return quantityField;
+    }
+    //add for mail
+    if (elem.element.id === "email") {
+      emailField = validateEmail(elem.element.value);
+      if (!emailField) {
+        elem.errorMessage(elem.element, elem.errorElement); //set error message
+      }
     }
   });
   //options validity check
@@ -187,11 +232,18 @@ function validate(event) {
     optionsValid = true;
   }
   //check result for both condition - form valid if both true
-  return fieldsValid && optionsValid && emailField && dateField;
+  return (
+    prenomField &&
+    nomField &&
+    optionsValid &&
+    emailField &&
+    dateField &&
+    quantityField
+  );
 }
 //block the page refresh to keep a valid conformation modal on
 function validConfirmation(event) {
-  event.preventDefault();//revoir si possible d'afficher sans prevent default
+  event.preventDefault(); //revoir si possible d'afficher sans prevent default
   closeModal();
   window.scrollTo({
     top: 0,

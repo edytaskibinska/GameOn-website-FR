@@ -154,19 +154,20 @@ conditions.addEventListener("click", (event) => {
   showOptionError(conditions, conditionsError, conditionsTextError); //set option conditions of use  error
 });
 
-function validateField(elementBase, elemId) {
-  if (elementBase.element.id === elemId) {
-    elementBase.isValidField =
-      elementBase.element.value === "" || !elementBase.element.validity.valid
+function validateField(elementItem, elemId) {
+  if (elementItem.element.id === elemId) {
+    elementItem.isValidField =
+      elementItem.element.value === "" || !elementItem.element.validity.valid
         ? false
         : true;
-    if (!elementBase.isValidField) {
-      elementBase.errorMessage(elementBase.element, elementBase.errorElement); //set error message
+    if (!elementItem.isValidField) {
+      elementItem.errorMessage(elementItem.element, elementItem.errorElement); //set error message
     }
-    return elementBase.isValidField;
+    return elementItem.isValidField;
   }
 }
-//defining variables for filsd validation initialized to false
+
+//defining variables for fields validation initialized to false
 let emailRegexValid = false;
 let optionsValid = false;
 let termOfUseValid = false;
@@ -184,6 +185,7 @@ function validate(event) {
       }
     }
   });
+
   //for all fields in inputElements - validity result
   const inputsAreValid =
     inputElements[0].isValidField &&
@@ -210,6 +212,7 @@ function validate(event) {
     optionsValid = true;
   }
 
+  //retms of use validity check
   if (!conditions.checked) {
     showOptionError(conditions, conditionsError, conditionsTextError); //set option conditions of use  error
     event.preventDefault();
@@ -217,7 +220,6 @@ function validate(event) {
   } else {
     termOfUseValid = true;
   }
-
   return inputsAreValid && optionsValid && emailRegexValid && termOfUseValid;
 }
 

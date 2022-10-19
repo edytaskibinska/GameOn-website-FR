@@ -32,7 +32,7 @@ const confirmationModalS = document.querySelector(".confirmation");
 
 //refexp for email
 const refexpEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-//text refexp for email
+//test refexp for email
 const validateEmail = (emailValue) => {
   return refexpEmail.test(emailValue);
 };

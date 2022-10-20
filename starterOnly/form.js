@@ -1,5 +1,4 @@
 //defining elements
-
 const modalbg2 = document.querySelector(".bground");
 
 const form = document.querySelector("form");
@@ -56,8 +55,6 @@ function generateMessage(elem) {
   return `Veuillez entrer ${elem.minLength} caractères ou plus pour le champs ${elem.name}.`;
 }
 function showEmailError(elem, errorContainer) {
-  console.log("elem.value", elem.value);
-
   if (elem.value == "") {
     // If  empty,
     errorContainer.textContent = generateMessage(elem);
@@ -173,6 +170,18 @@ let optionsValid = false;
 let termOfUseValid = false;
 
 //validate form conditions - return true or false
+function clearForm(event) {
+  event.preventDefault();
+  inputElements.forEach((elem) =>  elem.element.value = "");
+  if (conditions.checked) {
+    conditions.removeAttr('checked');
+  }
+  options.forEach((item)=> {
+    if (item.checked) {
+      item.removeAttr('checked');
+    }
+  })
+}
 function validate(event) {
   //for all fields in inputElements - validity check
   inputElements.forEach((elem) => {
@@ -234,12 +243,20 @@ function validConfirmation(event) {
   });
   confirmationModalS.style.display = "block";
 }
+
+function validateFormEvents(event) {
+  validConfirmation(event);
+  clearForm(event);
+
+}
 //check validity for button submit
 function checkValidity(event) {
+  
+
   //store the result of form validation
   const formIsValid = validate(event);
   //if form valid so show confirmation modal else prevent refresh
-  formIsValid ? validConfirmation(event) : event.preventDefault();
+  formIsValid ? validateFormEvents(event) : event.preventDefault();
 }
 // adding event listener for submit button of form
 btnSubmit.addEventListener("click", checkValidity);

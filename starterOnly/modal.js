@@ -22,6 +22,9 @@ closeConfirmation.forEach((btn) => btn.addEventListener("click", closeConfirmMod
 
 // launch modal form
 function launchModal() {
+  if(confirmationModal.style.display = "block") {
+    confirmationModal.style.display = "none";
+  }
   modalbg.style.display = "block";
 }
 
@@ -33,5 +36,6 @@ function closeModal() {
 // close conform modal form
 function closeConfirmModal() {
   confirmationModal.style.display = "none";
+  location.reload();
 }
 

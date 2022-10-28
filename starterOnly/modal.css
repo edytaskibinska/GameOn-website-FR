@@ -563,7 +563,7 @@ input:focus:invalid {
 }
 
 .form-inputs {
-  min-height: 450px;
+  min-height: 500px;
 }
 .btn-submit.close-confirmation {
   display: none;
@@ -576,7 +576,7 @@ input:focus:invalid {
   justify-content: center;
   color: white;
   padding: 20px;
-  min-height: 600px;
+  min-height: 500px;
   border-radius: 3px;
   z-index: 999;
 }

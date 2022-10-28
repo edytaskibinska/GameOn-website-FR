@@ -27,7 +27,13 @@ const conditionsError = document.querySelector("#conditions + span.error");
 const conditionsTextError =
   "Vous devez vérifier que vous acceptez les termes et conditions.";
 
+const closeConfirm = document.querySelector(".close-confirmation");
 const confirmationModalS = document.querySelector(".confirmation");
+const formInputs = document.querySelector(".form-inputs");
+
+
+//setting max date 
+date.max = new Date().toISOString().split("T")[0];
 
 //refexp for email
 const refexpEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -70,15 +76,16 @@ function showEmailError(elem, errorContainer) {
     // If data is too short,
     errorContainer.textContent = generateMessage(elem);
   }
+  elem.className = "text-control withError";
   errorContainer.className = "error active";
 }
 
 function showInputTextError(elem, errorContainer) {
-  //console.log("elem.value.trim()", elem.value.trim());
   if (elem.value === "" || elem.value === null || elem.validity.tooShort) {
     errorContainer.textContent = generateMessage(elem);
   }
   // Set the styling appropriately
+  elem.className = "text-control withError";
   errorContainer.className = "error active";
 }
 function showInputDateError(elem, errorContainer) {
@@ -86,6 +93,7 @@ function showInputDateError(elem, errorContainer) {
     errorContainer.textContent = `Vous devez entrer votre date de naissance.`;
   }
   // Set the styling appropriately
+  elem.className = "text-control withError";
   errorContainer.className = "error active";
 }
 
@@ -134,6 +142,8 @@ inputElements.forEach((elem) => {
     if (elem.element.value.length && elem.element.validity.valid) {
       elem.errorElement.textContent = ""; // Reset the content of the message
       elem.errorElement.className = "error"; // Reset the visual state of the message
+      elem.element.className = "text-control";
+
     } else {
       elem.errorMessage(elem.element, elem.errorElement); //set error message
     }
@@ -172,15 +182,15 @@ let termOfUseValid = false;
 //validate form conditions - return true or false
 function clearForm(event) {
   event.preventDefault();
-  inputElements.forEach((elem) =>  elem.element.value = "");
+  inputElements.forEach((elem) => (elem.element.value = ""));
   if (conditions.checked) {
-    conditions.removeAttr('checked');
+    conditions.removeAttr("checked");
   }
-  options.forEach((item)=> {
+  options.forEach((item) => {
     if (item.checked) {
-      item.removeAttr('checked');
+      item.removeAttr("checked");
     }
-  })
+  });
 }
 function validate(event) {
   //for all fields in inputElements - validity check
@@ -235,24 +245,20 @@ function validate(event) {
 //block the page refresh to keep a valid conformation modal on
 function validConfirmation(event) {
   event.preventDefault(); //revoir si possible d'afficher sans prevent default
-  closeModal();
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-  confirmationModalS.style.display = "block";
+  //closeModal();
+
+  formInputs.style.display = "none";
+  confirmationModalS.style.display = "flex";
+  closeConfirm.style.display = "block";
+  
 }
 
 function validateFormEvents(event) {
   validConfirmation(event);
   clearForm(event);
-
 }
 //check validity for button submit
 function checkValidity(event) {
-  
-
   //store the result of form validation
   const formIsValid = validate(event);
   //if form valid so show confirmation modal else prevent refresh
